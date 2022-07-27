@@ -435,6 +435,7 @@ impl Snapshot {
             // Skip the initialization below if it doesn't exists.
             return Ok(s);
         }
+        info!("{}", format!("---houfa--- snap new_for_sending s.dir_path: {:?}", s.dir_path));
         for cf_file in &mut s.cf_files {
             // initialize cf file size and reader
             if cf_file.size > 0 {
@@ -1136,6 +1137,7 @@ impl SnapManager {
         // Use a lock to protect the directory when scanning.
         let registry = self.core.registry.rl();
         let read_dir = file_system::read_dir(Path::new(&self.core.base))?;
+        info!("{}", format!("---houfa--- snap list_idle_snap self.core.base: {:?}", self.core.base));
         // Remove the duplicate snap keys.
         let mut v: Vec<_> = read_dir
             .filter_map(|p| {

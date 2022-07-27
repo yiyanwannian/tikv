@@ -8,7 +8,7 @@ use kvproto::raft_cmdpb::RaftCmdRequest;
 use kvproto::raft_serverpb::RaftMessage;
 use raft::SnapshotStatus;
 use tikv_util::time::ThreadReadId;
-use tikv_util::{deadline::Deadline, error};
+use tikv_util::{deadline::Deadline, error, info};
 
 use crate::store::fsm::RaftRouter;
 use crate::store::transport::{CasualRouter, ProposalRouter, StoreRouter};
@@ -108,6 +108,7 @@ where
     PR: ProposalRouter<EK::Snapshot>,
 {
     let region_id = req.get_header().get_region_id();
+    info!("{}", format!("---houfa--- send_command_impl raftkv region_id: {:?}", region_id));
     let mut cmd = RaftCommand::new(req, cb);
     cmd.deadline = deadline;
     router

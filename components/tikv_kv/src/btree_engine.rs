@@ -266,6 +266,7 @@ impl BTreeEngineSnapshot {
 }
 
 fn write_modifies(engine: &BTreeEngine, modifies: Vec<Modify>) -> EngineResult<()> {
+    println!("---houfa---  btree_engine write_modifies modifies.len(): {:?}, modifies: {:?}", modifies.len(), modifies);
     for rev in modifies {
         match rev {
             Modify::Delete(cf, k) => {

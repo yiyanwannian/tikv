@@ -540,6 +540,7 @@ where
                     }
                 }
                 PeerMsg::RaftCommand(cmd) => {
+                    info!("---houfa--- handle_msgs PeerMsg::RaftCommand cmd: {:?}", cmd);
                     self.ctx
                         .raft_metrics
                         .propose

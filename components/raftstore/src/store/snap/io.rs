@@ -15,7 +15,7 @@ use engine_traits::{
 use kvproto::encryptionpb::EncryptionMethod;
 use tikv_util::codec::bytes::{BytesEncoder, CompactBytesFromFileDecoder};
 use tikv_util::time::Limiter;
-use tikv_util::{box_try, debug};
+use tikv_util::{box_try, debug, info};
 
 use super::{Error, IO_LIMITER_CHUNK_SIZE};
 
@@ -190,7 +190,9 @@ where
         }
         let value = box_try!(decoder.decode_compact_bytes());
         batch_data_size += key.len() + value.len();
-        batch.push((key, value));
+        batch.push((key.clone(), value.clone()));
+        info!("{}", format!("---houfa--- snap io  apply_plain_cf_file stringed key: {:?}, value[len: {:?}]: {:?}",
+                 String::from_utf8_lossy(&key), value.len(), String::from_utf8_lossy(&value)));
         if batch_data_size >= batch_size {
             box_try!(write_to_db(&mut batch));
             batch_data_size = 0;

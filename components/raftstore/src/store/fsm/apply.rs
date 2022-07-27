@@ -1021,6 +1021,9 @@ where
         let data = entry.get_data();
 
         if !data.is_empty() {
+            // info!("---houfa--- handle_raft_entry_normal"; "data" => ?data);
+            // info!("---houfa--- handle_raft_entry_normal stringed"; "data" => ?String::from_utf8_lossy(data));
+            info!("---houfa--- handle_raft_entry_normal stringed"; "data.len" => data.len());
             let cmd = util::parse_data_at(data, index, &self.tag);
 
             if apply_ctx.yield_high_latency_operation && has_high_latency_operation(&cmd) {

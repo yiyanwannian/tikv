@@ -141,6 +141,7 @@ impl<'a, S: Snapshot> RawStoreInner<S> {
                 stats.data.flow_stats.read_keys = 1;
                 stats.data.flow_stats.read_bytes =
                     key_len + value.as_ref().map(|v| v.len()).unwrap_or(0);
+                println!("---houfa--- RawStoreInner raw_get_key_value get_cf key: {:?}, value: {:?}", key.to_string(), value);
                 value
             })
             .map_err(Error::from)

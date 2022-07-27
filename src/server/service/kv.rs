@@ -1424,6 +1424,7 @@ fn future_raw_get<E: Engine, L: LockManager>(
                 Err(e) => resp.set_error(format!("{}", e)),
             }
         }
+        println!("---houfa--- future_raw_get Ok(resp) resp: {:?}", resp);
         Ok(resp)
     }
 }
@@ -1454,6 +1455,8 @@ fn future_raw_put<E: Engine, L: LockManager>(
     let (cb, f) = paired_future_callback();
     let for_atomic = req.get_for_cas();
     let res = if for_atomic {
+        println!("---houfa---  future_raw_put raw_batch_put_atomic req.take_cf(): {:?}, req.take_key(): {:?}, req.take_value(): {:?}",
+                 req.take_cf(), req.take_key(), req.take_value());
         storage.raw_batch_put_atomic(
             req.take_context(),
             req.take_cf(),
@@ -1462,6 +1465,8 @@ fn future_raw_put<E: Engine, L: LockManager>(
             cb,
         )
     } else {
+        println!("---houfa---  future_raw_put raw_put req.take_cf(): {:?}, req.take_key(): {:?}, req.take_value(): {:?}",
+                 req.take_cf(), std::str::from_utf8(&req.take_key()).unwrap(), std::str::from_utf8(&req.take_value()).unwrap());
         storage.raw_put(
             req.take_context(),
             req.take_cf(),

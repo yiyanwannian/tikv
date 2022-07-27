@@ -55,6 +55,7 @@ where
     E: KvEngine,
 {
     fn send(&mut self, msg: RaftMessage) -> RaftStoreResult<()> {
+        info!("{}", format!("---houfa--- Transport send msg: {:?}", msg));
         match self.raft_client.send(msg) {
             Ok(()) => Ok(()),
             Err(reason) => Err(raftstore::Error::Transport(reason)),

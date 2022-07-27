@@ -1558,12 +1558,14 @@ where
                 // but not write raft_local_state to raft rocksdb in time.
                 // we write raft state to default rocksdb, with last index set to snap index,
                 // in case of recv raft log after snapshot.
+                info!("{}", format!("---houfa--- handle_raft_ready save_snapshot_raft_state_to snapshot_index: {:?}", snapshot_index));
                 ctx.save_snapshot_raft_state_to(snapshot_index, ready_ctx.kv_wb_mut())?;
             }
         }
 
         // only when apply snapshot
         if snapshot_index > 0 {
+            info!("{}", format!("---houfa--- handle_raft_ready save_apply_state_to snapshot_index: {:?}", snapshot_index));
             ctx.save_apply_state_to(ready_ctx.kv_wb_mut())?;
         }
 
@@ -1764,6 +1766,7 @@ where
     snap_data.mut_meta().set_for_balance(for_balance);
     let v = snap_data.write_to_bytes()?;
     snapshot.set_data(v.into());
+    info!("{}", format!("---houfa--- do_snapshot snap_data.write_to_bytes()? v: {:?}",   String::from_utf8_lossy(snapshot.get_data())));
 
     SNAPSHOT_KV_COUNT_HISTOGRAM.observe(stat.kv_count as f64);
     SNAPSHOT_SIZE_HISTOGRAM.observe(stat.size as f64);

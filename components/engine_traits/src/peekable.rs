@@ -1,5 +1,6 @@
 // Copyright 2019 TiKV Project Authors. Licensed under Apache-2.0.
 
+use tikv_util::info;
 use crate::*;
 
 /// Types from which values can be read.
@@ -72,6 +73,8 @@ pub trait Peekable {
 
         let mut m = M::default();
         m.merge_from_bytes(&value.unwrap())?;
+        info!("{}", format!("---houfa--- peekable get_msg_cf cf: {:?}, stringed key: {:?}, log_wrappered key: {:?}",
+            cf,  String::from_utf8_lossy(key), log_wrappers::Value::key(key)));
         Ok(Some(m))
     }
 }

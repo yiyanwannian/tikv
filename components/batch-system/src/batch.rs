@@ -238,6 +238,9 @@ impl<N: Fsm, C: Fsm> Batch<N, C> {
         if let Some(f) = &mut res {
             // failed to reschedule
             f.policy.take();
+            info!("---houfa--- schedule"; "index" => index);
+            // info!("---houfa--- schedule"; "index" => index; "res" => res);
+            // info!("{}", format!("---houfa--- schedule index: {:?} res: {:?}", index, res));
             self.normals[index] = res;
         } else if !inplace {
             self.normals.swap_remove(index);
@@ -442,6 +445,7 @@ impl<N: Fsm, C: Fsm, Handler: PollHandler<N, C>> Poller<N, C, Handler> {
             let mut fsm_cnt = batch.normals.len();
             while batch.normals.len() < max_batch_size {
                 if let Ok(fsm) = self.fsm_receiver.try_recv() {
+                    // info!("---houfa--- poll fsm_receiver:");
                     run = batch.push(fsm);
                 }
                 // If we receive a ControlFsm, break this cycle and call `end`. Because ControlFsm

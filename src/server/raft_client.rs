@@ -842,6 +842,10 @@ where
     /// enqueued to buffer. Caller is expected to call `flush` to ensure all buffered messages
     /// are sent out.
     pub fn send(&mut self, msg: RaftMessage) -> result::Result<(), DiscardReason> {
+        if msg.get_message().get_msg_type() == raft::eraftpb::MessageType::MsgAppend {
+            info!("{}", format!("---houfa--- Transport send MsgAppend msg: {:?}", msg));
+        }
+
         let store_id = msg.get_to_peer().store_id;
         let conn_id = if self.builder.cfg.grpc_raft_conn_num == 1 {
             0

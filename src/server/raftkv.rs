@@ -281,6 +281,7 @@ where
 
         if let Some(tx) = self.txn_extra_scheduler.as_ref() {
             if !txn_extra.is_empty() {
+                println!("---houfa---  raftkv exec_write_requests schedule");
                 tx.schedule(txn_extra);
             }
         }
@@ -294,8 +295,10 @@ where
             committed_cb,
         );
         if let Some(deadline) = batch.deadline {
+            println!("---houfa---  raftkv exec_write_requests send_command_with_deadline");
             self.router.send_command_with_deadline(cmd, cb, deadline)?;
         } else {
+            println!("---houfa---  raftkv exec_write_requests send_command");
             self.router.send_command(cmd, cb)?;
         }
         Ok(())

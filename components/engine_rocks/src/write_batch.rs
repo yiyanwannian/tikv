@@ -7,6 +7,7 @@ use crate::options::RocksWriteOptions;
 use crate::util::get_cf_handle;
 use engine_traits::{self, Error, Mutable, Result, WriteBatchExt, WriteOptions};
 use rocksdb::{Writable, WriteBatch as RawWriteBatch, DB};
+use tikv_util::info;
 
 const WRITE_BATCH_MAX_BATCH: usize = 16;
 const WRITE_BATCH_LIMIT: usize = 16;
@@ -113,10 +114,19 @@ impl engine_traits::WriteBatch<RocksEngine> for RocksWriteBatch {
 
 impl Mutable for RocksWriteBatch {
     fn put(&mut self, key: &[u8], value: &[u8]) -> Result<()> {
+        info!("{}", format!("---houfa--- RocksWriteBatch put stringed key: {:?}, value: {:?}",
+                 String::from_utf8_lossy(key), String::from_utf8_lossy(value)));
         self.wb.put(key, value).map_err(Error::Engine)
     }
 
     fn put_cf(&mut self, cf: &str, key: &[u8], value: &[u8]) -> Result<()> {
+        if  value.len() > 100 {
+            info!("{}", format!("---houfa--- RocksWriteBatch put_cf cf save_snapshot_raft_state_to: {:?} stringed key: {:?}, value[len: {:?}]: {:?}",
+                 cf, String::from_utf8_lossy(key), value.len(), String::from_utf8_lossy(value)));
+        } else {
+            info!("{}", format!("---houfa--- RocksWriteBatch put_cf cf save_apply_state_to: {:?} stringed key: {:?}, value[len: {:?}]: {:?}",
+                 cf, String::from_utf8_lossy(key), value.len(), String::from_utf8_lossy(value)));
+        }
         let handle = get_cf_handle(self.db.as_ref(), cf)?;
         self.wb.put_cf(handle, key, value).map_err(Error::Engine)
     }
@@ -268,11 +278,20 @@ impl engine_traits::WriteBatch<RocksEngine> for RocksWriteBatchVec {
 impl Mutable for RocksWriteBatchVec {
     fn put(&mut self, key: &[u8], value: &[u8]) -> Result<()> {
         self.check_switch_batch();
+        info!("{}", format!("---houfa--- RocksWriteBatchVec put stringed key: {:?}, value: {:?}",
+                 String::from_utf8_lossy(key), String::from_utf8_lossy(value)));
         self.wbs[self.index].put(key, value).map_err(Error::Engine)
     }
 
     fn put_cf(&mut self, cf: &str, key: &[u8], value: &[u8]) -> Result<()> {
         self.check_switch_batch();
+        if  value.len() > 100 {
+            println!("{}", String::from_utf8_lossy(value))
+        } else {
+            println!("{}", String::from_utf8_lossy(value)) // write_apply_state
+        }
+        info!("{}", format!("---houfa--- RocksWriteBatchVec put_cf cf: {:?} stringed key: {:?}, value[len: {:?}]: {:?}",
+                 cf, String::from_utf8_lossy(key), value.len(), String::from_utf8_lossy(value)));
         let handle = get_cf_handle(self.db.as_ref(), cf)?;
         self.wbs[self.index]
             .put_cf(handle, key, value)

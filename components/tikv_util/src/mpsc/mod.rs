@@ -97,6 +97,7 @@ impl<T> Sender<T> {
     /// Blocks the current thread until a message is sent or the channel is disconnected.
     #[inline]
     pub fn send(&self, t: T) -> Result<(), SendError<T>> {
+        // info!("---houfa--- mpsc send self.sender.send(t)");
         if self.state.is_sender_connected() {
             self.sender.send(t)
         } else {

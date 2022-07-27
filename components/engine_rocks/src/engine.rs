@@ -9,6 +9,7 @@ use engine_traits::{
     Error, IterOptions, Iterable, KvEngine, Peekable, ReadOptions, Result, SyncMutable,
 };
 use rocksdb::{DBIterator, Writable, DB};
+use tikv_util::info;
 
 use crate::db_vector::RocksDBVector;
 use crate::options::RocksReadOptions;
@@ -157,19 +158,36 @@ impl Peekable for RocksEngine {
 
 impl SyncMutable for RocksEngine {
     fn put(&self, key: &[u8], value: &[u8]) -> Result<()> {
+        println!("---houfa--- RocksEngine put key: {:?} value: {:?}", key, value);
+        info!("{}", format!("---houfa--- RocksEngine put key stringed: {:?} value.len: {:?}",
+                 String::from_utf8_lossy(key), value.len()));
         self.db.put(key, value).map_err(Error::Engine)
     }
 
     fn put_cf(&self, cf: &str, key: &[u8], value: &[u8]) -> Result<()> {
         let handle = get_cf_handle(&self.db, cf)?;
+        println!("---houfa--- RocksEngine put_cf cf: {:?}, key: {:?}, value: {:?}", cf, key, value);
+        // info!("{}", format!("---houfa--- RocksEngine put_cf stringed cf: {:?}, key: {:?}, value: {:?}",
+        //          cf, String::from_utf8_lossy(key), String::from_utf8_lossy(value)));
+        if  value.len() > 100 {
+            println!("{}", String::from_utf8_lossy(value))
+        } else {
+            println!("{}", String::from_utf8_lossy(value))
+        }
+        info!("{}", format!("---houfa--- RocksEngine put_cf stringed cf: {:?}, key: {:?}, value[len: {:?}]: {:?}",
+                 cf, String::from_utf8_lossy(key), value.len(), String::from_utf8_lossy(value)));
         self.db.put_cf(handle, key, value).map_err(Error::Engine)
     }
 
     fn delete(&self, key: &[u8]) -> Result<()> {
+        println!("---houfa--- RocksEngine delete key: {:?}", key);
+        println!("---houfa--- RocksEngine delete stringed key: {:?}", String::from_utf8_lossy(key));
         self.db.delete(key).map_err(Error::Engine)
     }
 
     fn delete_cf(&self, cf: &str, key: &[u8]) -> Result<()> {
+        println!("---houfa--- RocksEngine delete_cf cf: {:?}, key: {:?}", cf, key);
+        println!("---houfa--- RocksEngine delete_cf stringed cf: {:?}, key: {:?}", cf, String::from_utf8_lossy(key));
         let handle = get_cf_handle(&self.db, cf)?;
         self.db.delete_cf(handle, key).map_err(Error::Engine)
     }

@@ -104,6 +104,7 @@ impl<N: Fsm> FsmState<N> {
             None => {}
             Some(mut n) => {
                 n.set_mailbox(mailbox);
+                println!("---houfa--- scheduler.schedule(n)");
                 scheduler.schedule(n);
             }
         }

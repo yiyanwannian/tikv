@@ -410,11 +410,12 @@ impl<ER: RaftEngine> TiKVServer<ER> {
             if self.config.storage.reserve_space.0 == 0 {
                 0
             } else {
+                0
                 // Max one of configured `reserve_space` and `storage.capacity * 5%`.
-                cmp::max(
-                    (capacity as f64 * 0.05) as u64,
-                    self.config.storage.reserve_space.0,
-                )
+                // cmp::max(
+                //     (capacity as f64 * 0.05) as u64,
+                //     self.config.storage.reserve_space.0,
+                // )
             },
         )
         .unwrap();

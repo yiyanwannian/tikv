@@ -6,6 +6,7 @@ use std::sync::Arc;
 use engine_traits::{self, IterOptions, Iterable, Peekable, ReadOptions, Result, Snapshot};
 use rocksdb::rocksdb_options::UnsafeSnap;
 use rocksdb::{DBIterator, DB};
+use tikv_util::info;
 
 use crate::db_vector::RocksDBVector;
 use crate::options::RocksReadOptions;
@@ -107,6 +108,7 @@ impl Peekable for RocksSnapshot {
         }
         let handle = get_cf_handle(self.db.as_ref(), cf)?;
         let v = self.db.get_cf_opt(handle, key, &opt)?;
+        info!("{}", format!("---houfa--- snapshot get_value_cf_opt key: {:?}, value: {:?}", String::from_utf8_lossy(key), v));
         Ok(v.map(RocksDBVector::from_raw))
     }
 }

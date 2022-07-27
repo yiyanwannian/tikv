@@ -1001,11 +1001,13 @@ impl<E: Engine, L: LockManager> Storage<E, L> {
                 let snapshot =
                     Self::with_tls_engine(|engine| Self::snapshot(engine, snap_ctx)).await?;
                 let store = RawStore::new(snapshot, enable_ttl);
+                // println!("---houfa--- raw_get snapshot: {:?}", store);
                 let cf = Self::rawkv_cf(&cf)?;
                 {
                     let begin_instant = Instant::now_coarse();
                     let mut stats = Statistics::default();
                     let r = store.raw_get_key_value(cf, &Key::from_encoded(key), &mut stats);
+                    println!("---houfa--- raw_get store.raw_get_key_value r: {:?}", r);
                     KV_COMMAND_KEYREAD_HISTOGRAM_STATIC.get(CMD).observe(1_f64);
                     tls_collect_read_flow(ctx.get_region_id(), &stats);
                     SCHED_PROCESSING_READ_HISTOGRAM_STATIC
@@ -1211,6 +1213,7 @@ impl<E: Engine, L: LockManager> Storage<E, L> {
             return Err(Error::from(ErrorInner::TTLNotEnabled));
         }
 
+        println!("---houfa---  raw_put m: {:?}", m);
         self.engine.async_write(
             &ctx,
             WriteData::from_modifies(vec![m]),

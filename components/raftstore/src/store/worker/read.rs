@@ -31,7 +31,7 @@ use tikv_util::codec::number::decode_u64;
 use tikv_util::lru::LruCache;
 use tikv_util::time::monotonic_raw_now;
 use tikv_util::time::{Instant, ThreadReadId};
-use tikv_util::{debug, error};
+use tikv_util::{debug, error, info};
 
 use super::metrics::*;
 use crate::store::fsm::store::StoreMeta;
@@ -71,6 +71,8 @@ pub trait ReadExecutor<E: KvEngine> {
         };
         if let Some(res) = res {
             resp.mut_get().set_value(res.to_vec());
+            info!("{}", format!("---houfa--- ReadExecutor get_value stringed cf: {:?}, key: {:?}, value: {:?}",
+            req.get_get().get_cf(), String::from_utf8_lossy(key), String::from_utf8_lossy(&res.to_vec())));
         }
 
         Ok(resp)
@@ -108,6 +110,8 @@ pub trait ReadExecutor<E: KvEngine> {
                     let snapshot =
                         RegionSnapshot::from_snapshot(self.get_snapshot(ts.take()), region.clone());
                     response.snapshot = Some(snapshot);
+                    info!("---houfa--- execute Snap snapshot");
+            // "key" => String::from_utf8_lossy(key); "value" => String::from_utf8_lossy(res.to_vec()));
                     Response::default()
                 }
                 CmdType::ReadIndex => {
@@ -115,6 +119,7 @@ pub trait ReadExecutor<E: KvEngine> {
                     if let Some(read_index) = read_index {
                         let mut res = ReadIndexResponse::default();
                         res.set_read_index(read_index);
+                        info!("---houfa--- execute ReadIndex"; "read_index" => read_index);
                         resp.set_read_index(res);
                     } else {
                         panic!("[region {}] can not get readindex", region.get_id());
