@@ -282,15 +282,15 @@ members = [
 default-members = ["cmd/tikv-server", "cmd/tikv-ctl"]
 
 [profile.dev.package.grpcio-sys]
-debug = false
+debug = true
 opt-level = 1
 
 [profile.dev.package.librocksdb_sys]
-debug = false
+debug = true
 opt-level = 1
 
 [profile.dev.package.libtitan_sys]
-debug = false
+debug = true
 opt-level = 1
 
 [profile.dev.package.tests]
@@ -299,7 +299,7 @@ opt-level = 1
 
 [profile.dev]
 opt-level = 0
-debug = 0
+debug = 1
 codegen-units = 4
 lto = false
 incremental = true
@@ -310,7 +310,7 @@ rpath = false
 
 [profile.release]
 opt-level = 3
-debug = false
+debug = true
 codegen-units = 1
 lto = "thin"
 incremental = false
@@ -325,7 +325,7 @@ codegen-units = 4
 
 [profile.test]
 opt-level = 0
-debug = 0
+debug = 1
 codegen-units = 16
 lto = false
 incremental = true
@@ -336,7 +336,7 @@ rpath = false
 # The benchmark profile is identical to release, except that lto = false
 [profile.bench]
 opt-level = 3
-debug = false
+debug = true
 codegen-units = 1
 lto = 'thin'
 incremental = false
